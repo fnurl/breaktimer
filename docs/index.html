@@ -509,14 +509,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`
       let currentProgress = (timerStartValue - timerValue) / timerStartValue;
       let activeIndex = Math.floor(currentProgress * 10);
 
-      console.log(`activeIndex: ${activeIndex}`)
-
       for (let i = 0; i < progressNodeList.length; i++) {
         if (i < activeIndex) {
           progressNodeList[i].classList.remove("active");
           progressNodeList[i].classList.add("complete");
         } else if (i == activeIndex) {
-          console.log(`adding "active" to index ${i}: ${progressNodeList[i]}`);
           progressNodeList[i].classList.add("active");
         }
       }

@@ -32,7 +32,10 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
   <!-- Break timer styling -->
   <style>
     :root {
-      --dot-size: 6vh;  
+      --dot-size: 6vh;
+      --color-incomplete: #ddd;
+      --color-complete: #393;
+      --color-active: #3b3;
     }
     html,body,div,p { margin: 0; padding: 0; }
     html { box-sizing: border-box; }
@@ -62,19 +65,21 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
     .progress-dot {
       width: var(--dot-size);
       height: var(--dot-size);
-      background-color: #333;
-      opacity: 0.2;
+      background-color: var(--color-incomplete);
       border-radius: calc(var(--dot-size) / 2);
-      border: .5vw solid #333;
+      border: .5vw solid var(--color-incomplete);
       margin: .5vw;
     }
-    .progress-dot.complete { opacity: 1; background-color: #393; border-color: #393; }
+    .progress-dot.complete {
+      background-color: var(--color-complete);
+      border-color: var(--color-complete);
+    }
     .progress-dot.active {
-      background-color: #3b3;
-      border-color: #3b3;
+      background-color: var(--color-active);
+      border-color: var(--color-active);
       animation: 1s cubic-bezier(.46,.03,.52,.96) infinite alternate fadeout;
     }
-    @keyframes fadeout { from { opacity: 1; } to { opacity: 0.2; } }
+    @keyframes fadeout { from { opacity: 1; } to { opacity: 0.3; } }
     .github-fork-ribbon::before { background-color: #000; }
     .github-fork-ribbon { opacity: 0.05 ; transition: opacity .5s;}
     .github-fork-ribbon:hover { opacity: 1;}

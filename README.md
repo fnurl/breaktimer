@@ -56,11 +56,6 @@ The order of the parameters does not matter.
 - **Default 10 minute break, use English language**: [`breaktimer.html?lang=en`](https://fnurl.github.io/breaktimer/?lang=en)
 
 
-### Limitations
-
-Font size of timer is set with breaks shorter than 100 minutes in mind.
-
-
 ## Development notes
 
 

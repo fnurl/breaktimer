@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="version" content="0.1">
+  <meta name="version" content="0.1.1">
   <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAHdElN
@@ -440,8 +440,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
   <!-- Actual script -->
   <script>
     let debug = false;
+    let timeStart = -1;
     let timerValue = -1;
     let timerStartValue = -1;
+    let countdownValue = -1;
     
     // Prepare audio (base64 encoded in script tag above)
     let beeps = new Audio();
@@ -478,11 +480,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
       timerValue = minutes * 60;
       timerStartValue = timerValue;
 
-      // Start timer
+      // Start timer. When debug, time runs 10x faster.
+      updateDisplay();
+      timeStart = Date.now();
       if (debug) {
-        countdown(100);
+        setTimeout(countdown, 100, 100);
       } else {
-        countdown(1000);
+        setTimeout(countdown, 1000, 1000);
       }
     };
 
@@ -493,6 +497,34 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
       // Debug console logging
       if (timerValue%10 == 0 && debug) console.log(`${Math.floor(timerValue/60)}:${timerValue%60}`);
 
+      // Update timerValue. If debugging, just decrement the timerValue.
+      // Otherwise, update timerValue by checking the internal clock.
+      if (debug) {
+        timerValue--;
+      } else {
+        let delta = Date.now() - timeStart;
+        timerValue = timerStartValue - Math.round(delta/1000);
+      }
+
+      // Update timer display and progressbar
+      updateDisplay();
+
+      // If timer is not done, call countdown again after provided delay.
+      // Otherwise, hide timer, show end message and play sound.
+      if (timerValue > 0) {
+        setTimeout(countdown, delay, delay);
+      } else {
+        document.getElementById("countdown").classList.add("hidden");
+        document.getElementById("countdown-done").classList.remove("hidden");
+        document.title = document.getElementById("break-over").innerText;
+        beeps.play();
+      }
+    }
+
+    /**
+     * Update timer display and progressbar.
+     */
+    function updateDisplay() {
       // Update timer display
       let timerP = document.getElementById("timer");
       timerP.innerHTML = `${Math.ceil(timerValue/60)}`;
@@ -508,20 +540,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
         } else if (i == activeIndex) {
           progressNodeList[i].classList.add("active");
         }
-      }
-
-      // If timer is not done, tick and call again.
-      if (timerValue > 0) {
-        timerValue--;
-        setTimeout(countdown, delay, delay);
-      }
-      
-      // If timer is done, hide it, show end message and play sound
-      else {
-        document.getElementById("countdown").classList.add("hidden");
-        document.getElementById("countdown-done").classList.remove("hidden");
-        document.title = document.getElementById("break-over").innerText;
-        beeps.play();
       }
     }
 

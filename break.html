@@ -537,18 +537,20 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
      */
     function updateDisplay() {
       // Update timer display
-      let timerP = document.getElementById("timer");
-      timerP.innerHTML = `${Math.ceil(timerValue/60)}`;
+      document.getElementById("timer").innerHTML = Math.ceil(timerValue/60);
 
       // Update progress bar
       let progressNodeList = document.querySelectorAll(".progress-dot");
       let currentProgress = (timerStartValue - timerValue) / timerStartValue;
       let activeIndex = Math.floor(currentProgress * 10);
       for (let i = 0; i < progressNodeList.length; i++) {
+        // completed dots
         if (i < activeIndex) {
           progressNodeList[i].classList.remove("active");
           progressNodeList[i].classList.add("complete");
-        } else if (i == activeIndex) {
+        }
+        // active dot
+        else if (i == activeIndex) {
           progressNodeList[i].classList.add("active");
         }
       }

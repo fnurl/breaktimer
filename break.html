@@ -16,16 +16,19 @@ KvgOGhw4FIJvbo1VjpxQkkvcyspJdSBvkkAg40K+lioUg6IzGalAKO3BC4hd+mw6qR80C1OeRQak
 KfbPqVjGF41W7CV5EgzbcqOsLLItW6VfAT2AT5mqSqzMAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIx
 LTAzLTIzVDE2OjM2OjQxKzAwOjAwzj2NDQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wMy0yM1Qx
 NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
+
   <!-- Fallback CSS for Fork Me ribbon if we do not have an internet connection -->
   <style>
     .right-bottom { right: 0; bottom: 0; }
     .fixed { position: fixed; }
     a { text-decoration: none; font-family: Helvetica, Arial, sans-serif;}
   </style>
+
   <!-- Fork Me CSS. https://github.com/simonwhitaker/github-fork-ribbon-css -->
   <link rel="stylesheet" href="///cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
   <title></title>
 
+  <!-- Break timer styling -->
   <style>
     html,body,div,p { margin: 0; padding: 0; }
     html { box-sizing: border-box; }
@@ -74,7 +77,8 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
     .progress-dot.active {
       background-color: #333;
       animation-name: fadeout;
-      animation-duration: 1s;
+      animation-timing-function: cubic-bezier(.55,.09,.68,.53);
+      animation-duration: 0.5s;
       animation-direction: alternate;
       animation-iteration-count: infinite;
     }

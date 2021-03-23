@@ -31,6 +31,9 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
 
   <!-- Break timer styling -->
   <style>
+    :root {
+      --dot-size: 6vh;  
+    }
     html,body,div,p { margin: 0; padding: 0; }
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -57,16 +60,19 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
     p#break-over { font-size: 20vh; font-weight: bold; }
     #progress-container { width: 80%; }
     .progress-dot {
-      width: 10%;
-      height: 5vh;
+      width: var(--dot-size);
+      height: var(--dot-size);
       background-color: #333;
       opacity: 0.2;
-      border: .5vw solid white;
+      border-radius: calc(var(--dot-size) / 2);
+      border: .5vw solid #333;
+      margin: .5vw;
     }
-    .progress-dot.complete { opacity: 1; }
+    .progress-dot.complete { opacity: 1; background-color: #393; border-color: #393; }
     .progress-dot.active {
       background-color: #3b3;
-      animation: 0.5s cubic-bezier(.55,.09,.68,.53) infinite alternate fadeout;
+      border-color: #3b3;
+      animation: 1s cubic-bezier(.46,.03,.52,.96) infinite alternate fadeout;
     }
     @keyframes fadeout { from { opacity: 1; } to { opacity: 0.2; } }
     .github-fork-ribbon::before { background-color: #000; }

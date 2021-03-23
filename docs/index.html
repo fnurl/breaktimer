@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="version" content="0.1">
   <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,
-  iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAHdElN
 RQflAxcQLyrVsmesAAABJklEQVQoz23QP0tbARQF8J/vRTRQUURQRKkIDmIqxMEOTm4VQQWhX6Io
 VHARBZcWHOomgoMuYolCC04FRz+Ag382cdOXxCGgUlHMc8hLzOCZLueee+49lzeMKYnF7ox7F23m
@@ -26,6 +26,7 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
 
   <!-- Fork Me CSS. https://github.com/simonwhitaker/github-fork-ribbon-css -->
   <link rel="stylesheet" href="///cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+  
   <title></title>
 
   <!-- Break timer styling -->
@@ -91,7 +92,8 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
 
   <!-- Sound Data -->
   <script>
-    const beepsData = `data:audio/mpeg;base64,SUQzAwAAAAAAFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/82DAAB0SJrL/SWgC3LyY0abacZUYrRt0
+    const beepsData = `data:audio/mpeg;base64,
+SUQzAwAAAAAAFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/82DAAB0SJrL/SWgC3LyY0abacZUYrRt0
 gCiBBkC4J9QgQIBROlGPNecE07LM003WmX0x8CoAnAXAScAXADQJQTxhxzpEgPQTMc6RcNDMe5Lk
 wRsTM3QQZNN////9aBo3Qagh//0E3UhTL5uovm5/4neD78ocqcGP///xA4h+UcUAtASxAAEPMAAA
 Wd7s76mmiVRBIVVqvKpRtNz/82DAEBpC5wcTjIgC/UUnpaKgsLyLCc2PqJXHMcjhyjUpjnlcgZQG
@@ -430,8 +432,7 @@ J/WcJsbIYqEBQslAfQCZgbtGeKZgmgg///9aKnr/////////7mKo////////////////////////
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAD/82DA9CEAAlwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`
-
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
   </script>
 
   <!-- GUI Texts -->
@@ -457,40 +458,43 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`
     let debug = false;
     let timerValue = -1;
     let timerStartValue = -1;
-    let timerDone = false;
     
-    // prepare audio
+    // Prepare audio (base64 encoded in script tag above)
     let beeps = new Audio();
     beeps.src = beepsData;
 
-    // Read m param from URL. Defaults: 10 minutes, navigator.language
+    // Read `m` and `lang` params from URL. Defaults: 10 minutes & browser's
+    // preferred language.
     window.onload = function(event) {
       let params = new URLSearchParams(document.location.search.substring(1));
 
-      //  check for debug
+      // Set debug mode if requested
       if (params.get("debug") != null) {
         debug = true;
       } 
 
-      // set gui language
+      // Get gui language param
       let lang = params.get("lang");
-      // get browser preferred language if no explicit language is given
+      // Use browser's preferred language if no explicit language is given
       if (lang == null) {
         lang = navigator.language.substring(0,2);
       }
-      // use selected language if it exists. otherwise, default to "en"
+      // Use selected language if it exists. otherwise, default to "en"
       if (!(lang in guiTexts)) {
           lang = "en";
       }
       initGuiTexts(lang);
 
-      // get timer value and start timer
+      // Get timer value. Default to 10 minutes if m param is unavailable or not
+      // parsable
       let minutes = parseInt(params.get("m"), 10);
       if (isNaN(minutes)) {
         minutes = 10;
       }
       timerValue = minutes * 60;
       timerStartValue = timerValue;
+
+      // Start timer
       if (debug) {
         countdown(100);
       } else {
@@ -498,17 +502,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`
       }
     };
 
+    /**
+     * Countdown and update display.
+     */
     function countdown(delay=1000) {
-      // debug console logging
+      // Debug console logging
       if (timerValue%10 == 0 && debug) console.log(`${Math.floor(timerValue/60)}:${timerValue%60}`);
 
-      // update display
+      // Update timer display
       let timerP = document.getElementById("timer");
       timerP.innerHTML = `${Math.ceil(timerValue/60)}`;
+
+      // Update progress bar
       let progressNodeList = document.querySelectorAll(".progress-dot");
       let currentProgress = (timerStartValue - timerValue) / timerStartValue;
       let activeIndex = Math.floor(currentProgress * 10);
-
       for (let i = 0; i < progressNodeList.length; i++) {
         if (i < activeIndex) {
           progressNodeList[i].classList.remove("active");
@@ -518,19 +526,25 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`
         }
       }
 
-      // timer not done
+      // If timer is not done, tick and call again.
       if (timerValue > 0) {
         timerValue--;
         setTimeout(countdown, delay, delay);
-      // timerValue <= 0 but timer not registered as done
-      } else if (!timerDone) {
-        timerDone = true;
+      }
+      
+      // If timer is done, hide it, show end message and play sound
+      else {
         document.getElementById("countdown").classList.add("hidden");
         document.getElementById("countdown-done").classList.remove("hidden");
+        document.title = document.getElementById("break-over").innerText;
         beeps.play();
       }
     }
 
+    /**
+     * Set GUI strings and page title to lang.
+     * Language strings can be found in a script tag above.
+     */
     function initGuiTexts(lang) {
       let guiElement;
       document.title = guiTexts[lang].title;

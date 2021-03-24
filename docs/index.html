@@ -454,6 +454,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
     let timeStart = -1;
     let timerValue = -1;
     let timerStartValue = -1;
+    let lang = "";
     
     // Prepare audio (base64 encoded in script tag above)
     let beeps = new Audio();
@@ -470,7 +471,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
       } 
 
       // Get gui language param
-      let lang = params.get("lang");
+      lang = params.get("lang");
       // Use browser's preferred language if no explicit language is given
       if (lang == null) {
         lang = navigator.language.substring(0,2);
@@ -479,7 +480,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
       if (!(lang in guiTexts)) {
           lang = "en";
       }
-      initGuiTexts(lang);
+      initGuiTexts();
 
       // Get timer value. Default to 10 minutes if m param is unavailable or not
       // parsable
@@ -536,7 +537,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
      */
     function updateDisplay() {
       // Update timer display
-      document.getElementById("timer").innerHTML = Math.ceil(timerValue/60);
+      let timeLeft = Math.ceil(timerValue/60);
+      document.getElementById("timer").innerHTML = timeLeft;
+      document.title = `${guiTexts[lang].title} - ${timeLeft}m`;
 
       // Update progress bar
       let progressNodeList = document.querySelectorAll(".progress-dot");
@@ -559,7 +562,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
      * Set GUI strings and page title to lang.
      * Language strings can be found in a script tag above.
      */
-    function initGuiTexts(lang) {
+    function initGuiTexts() {
       let guiElement;
       document.title = guiTexts[lang].title;
       for (id of Object.keys(guiTexts[lang])) {

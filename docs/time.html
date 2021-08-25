@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="version" content="0.1.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAHdElN
+RQflAxcQLyrVsmesAAABJklEQVQoz23QP0tbARQF8J/vRTRQUURQRKkIDmIqxMEOTm4VQQWhX6Io
+VHARBZcWHOomgoMuYolCC04FRz+Ag382cdOXxCGgUlHMc8hLzOCZLueee+49lzeMKYnF7ox7F23m
+ldxZ0P5GBnWCFo9CgUct700vu5R37kzeldV6FzrkFK0Z0a1b1g8Ff3RW26F1kRmwaAlMurYhVRGM
+KvgOGhw4FIJvbo1VjpxQkkvcyspJdSBvkkAg40K+lioUg6IzGalAKO3BC4hd+mw6qR80C1OeRQak
+/Qe/fLTp3pEmvSJPAY4NGk5WFM35LY0hnxxX1nU58Vdr7SsN+GDfqZ4qNaVgV39N0mfHrdmqGr76
+KfbPqVjGF41W7CV5EgzbcqOsLLItW6VfAT2AT5mqSqzMAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIx
+LTAzLTIzVDE2OjM2OjQxKzAwOjAwzj2NDQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0wMy0yM1Qx
+NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
+
+  <!-- Fallback CSS for Fork Me ribbon if we do not have an internet connection -->
+  <style>
+    .right-bottom { right: 0; bottom: 0; }
+    .fixed { position: fixed; }
+    a { text-decoration: none; font-family: Helvetica, Arial, sans-serif;}
+  </style>
+
+  <!-- Fork Me CSS. https://github.com/simonwhitaker/github-fork-ribbon-css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+  
+  <title></title>
+
+  <!-- Break timer styling -->
+  <style>
+    :root {
+      --color-time: #000;
+      --color-bg: #fff;
+    }
+    html,body,div,p { margin: 0; padding: 0; }
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { width: 100vw; height: 100vh; background-color: var(--color-bg); }
+    .centered { display: flex; justify-content: center; align-items: center; }
+    .full-width { width: 100%; }
+    .full-height { height: 100%; }
+    .column { flex-direction: column; }
+    .row { flex-direction: row; }
+    .space-between { justify-content: space-between; }
+    .hidden { display: none; }
+    p {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 10vh;
+      padding: 2vh;
+      text-align: center;
+    }
+    p#time {
+      color: var(--color-time);
+      font-size: 80vmin;
+      font-weight: bold;
+      line-height: 0.8;
+      padding: 0;
+    }
+    @keyframes fadeout { from { opacity: 1; } to { opacity: 0.3; } }
+    .github-fork-ribbon::before { background-color: #000; }
+    .github-fork-ribbon { opacity: 0.05 ; transition: opacity .5s;}
+    .github-fork-ribbon:hover { opacity: 1;}
+  </style>
+
+  <!-- GUI Texts -->
+  <script>
+    const guiTexts = {
+      "en": {
+        "title": "Break",
+        "start-again": "We resume in",
+        "minutes": "minutes",
+        "break-over": "Break is over"
+      },
+      "sv": {
+        "title": "Rast",
+        "start-again": "Vi börjar igen om",
+        "minutes": "minuter",
+        "break-over": "Rasten är slut"
+      }
+    };
+  </script>
+
+  <!-- Actual script -->
+  <script>
+    let debug = false;
+    let currentTime = null;
+    let hours = null;
+    let minutes = null;
+    let seconcs = null;
+    let timeString = null;
+    let lang = "";
+    let hideRibbon = false
+
+    // Read `m` and `lang` params from URL. Defaults: 10 minutes & browser's
+    // preferred language.
+    window.onload = function(event) {
+      let params = new URLSearchParams(document.location.search.substring(1));
+
+      // Set debug mode if requested
+      if (params.get("debug") != null) {
+        debug = true;
+      } 
+
+      // Get gui language param
+      lang = params.get("lang");
+      // Use browser's preferred language if no explicit language is given
+      if (lang == null) {
+        lang = navigator.language.substring(0,2);
+      }
+      // Use selected language if it exists. otherwise, default to "en"
+      if (!(lang in guiTexts)) {
+          lang = "en";
+      }
+
+      // Get hideribbon param
+      if (params.get("hideribbon") != null) {
+        hideRibbon = true
+      }
+
+      if (hideRibbon) {
+        document.getElementById("forkme").classList.add("hidden");
+      }
+
+      // Show and start updating clock
+      updateClock()
+
+    };
+
+
+    /**
+     * Update clock.
+     */
+    function updateClock() {
+      // Update time display
+      currentTime = new Date()
+      hours = currentTime.getHours().toString().padStart(2, '0');
+      minutes = currentTime.getMinutes().toString().padStart(2, '0');
+      seconds = currentTime.getSeconds().toString().padStart(2, '0');
+      timeString = `${hours}:${minutes}:${seconds}`
+      document.getElementById("time").innerHTML = timeString;
+      setTimeout(updateClock, 1000);
+    }
+
+  </script>
+</head>
+
+<body>
+  <a id="forkme" class="github-fork-ribbon right-bottom fixed" href="https://github.com/fnurl/breaktimer" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a> 
+  <div id="wrapper" class="full-width full-height centered column">
+    <div id="clock" class="full-width full-height centered column">
+        <p id="time"></p>
+    </div>
+  </div>
+</body>
+</html>

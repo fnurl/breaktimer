@@ -60,7 +60,10 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
       line-height: 0.8;
       padding: 0;
     }
-    @keyframes fadeout { from { opacity: 1; } to { opacity: 0.3; } }
+    .blink {
+      animation: 1s cubic-bezier(0.87, 0, 0.13, 1) infinite alternate fadeout;
+    }
+    @keyframes fadeout { from { opacity: 1; } to { opacity: 0.1; } }
     .github-fork-ribbon::before { background-color: #000; }
     .github-fork-ribbon { opacity: 0.05 ; transition: opacity .5s;}
     .github-fork-ribbon:hover { opacity: 1;}
@@ -90,10 +93,15 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
     let currentTime = null;
     let hours = null;
     let minutes = null;
-    let seconcs = null;
+    let seconds = null;
     let timeString = null;
+    let sepString = null;
+    let sepChar = ":";
+    let hideRibbon = false;
+    let hideSeconds = false;
+    let blink = false;
+    let blinkString = "";
     let lang = "";
-    let hideRibbon = false
 
     // Read `m` and `lang` params from URL. Defaults: 10 minutes & browser's
     // preferred language.
@@ -115,19 +123,30 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
       if (!(lang in guiTexts)) {
           lang = "en";
       }
-
       // Get hideribbon param
       if (params.get("hideribbon") != null) {
-        hideRibbon = true
+        hideRibbon = true;
+      }
+      // Get hideseconds param
+      if (params.get("hideseconds") != null) {
+        hideSeconds = true;
+      }
+      // Get blink param
+      if (params.get("blink") != null) {
+        blink = true;
+      }
+      // Get separator char
+      if (params.get("separator") != null) {
+        sepChar = params.get("separator");
       }
 
+      // Hide stuff
       if (hideRibbon) {
         document.getElementById("forkme").classList.add("hidden");
       }
 
       // Show and start updating clock
       updateClock()
-
     };
 
 
@@ -140,7 +159,14 @@ NjozNjozOSswMDowMIZKcs8AAAAASUVORK5CYII=" />
       hours = currentTime.getHours().toString().padStart(2, '0');
       minutes = currentTime.getMinutes().toString().padStart(2, '0');
       seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      timeString = `${hours}:${minutes}:${seconds}`
+      if (blink) {
+        blinkString = ` class="blink"`;
+      } 
+      sepString = `<span${blinkString}>${sepChar}</span>`;
+      timeString = `${hours}${sepString}${minutes}`;
+      if (!hideSeconds) {
+        timeString = `${timeString}${sepString}${seconds}`;
+      }
       document.getElementById("time").innerHTML = timeString;
       setTimeout(updateClock, 1000);
     }

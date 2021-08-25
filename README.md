@@ -56,6 +56,20 @@ The order of the parameters does not matter.
 - **Default 10 minute break, use English language**: [`breaktimer.html?lang=en`](https://fnurl.github.io/breaktimer/?lang=en)
 
 
+## Clock
+
+A clock is also available in the file `time.html`.
+
+### Configuration notes
+
+The following parameters can be passed to the page:
+
+- `hideribbon`: If this parameter exists, hide the forkme ribbon.
+- `hideseconds`: If this parameter exists, hide seconds.
+- `blink`: If this parameter exists, blink separator.
+- `separator=<char>`: Use this char to separate hours/minutes/seconds
+
+
 ## Development notes
 
 
